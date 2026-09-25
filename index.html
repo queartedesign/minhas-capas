@@ -1,413 +1,347 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Capas | Papelaria Exclusiva</title>
-    <!-- Tailwind CSS via CDN para estilização leve e rápida -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#fdf8f6',
-                            100: '#f2e8e5',
-                            500: '#d97757',
-                            600: '#c25e3e',
-                            700: '#a04629',
-                            900: '#522011',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Fonte Inter para tipografia limpa -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        
-        /* Otimizações de renderização para velocidade extrema */
-        img {
-            content-visibility: auto;
-        }
-
-        /* Modal backdrop blurring */
-        .backdrop-blur-custom {
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        /* Animação suave para as imagens ao carregar */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo de Capas Exclusivas</title>
+  <!-- Tailwind CSS CDN para estilização rápida e responsiva -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col relative pb-20">
 
-    <!-- CABEÇALHO / HERO -->
-    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-sm backdrop-blur-custom bg-white/90">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <!-- Logotipo / Título -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-brand-500 text-white flex items-center justify-center font-bold text-xl shadow-md">
-                        ✨
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-slate-900 tracking-tight">Ateliê Doce Papel</h1>
-                        <p class="text-xs text-slate-500">Mostruário Digital de Capas de Agendas & Cadernos</p>
-                    </div>
-                </div>
-
-                <!-- Campo de Busca em Tempo Real -->
-                <div class="relative w-full md:w-80">
-                    <input 
-                        type="text" 
-                        id="searchInput"
-                        placeholder="Buscar por cor, estilo ou tema..." 
-                        class="w-full pl-10 pr-4 py-2 bg-slate-100 hover:bg-slate-200/60 focus:bg-white text-sm border border-transparent focus:border-brand-500 rounded-full transition-all outline-none"
-                    >
-                    <svg class="w-4 h-4 absolute left-3.5 top-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Filtros de Categoria -->
-            <nav class="flex items-center gap-2 overflow-x-auto pt-4 pb-1 no-scrollbar text-sm font-medium">
-                <button onclick="filterCategory('todos')" class="filter-btn active px-4 py-1.5 rounded-full bg-brand-500 text-white shadow-sm transition-all whitespace-nowrap" data-cat="todos">
-                    Todas
-                </button>
-                <button onclick="filterCategory('agendas')" class="filter-btn px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-cat="agendas">
-                    Agendas 2026
-                </button>
-                <button onclick="filterCategory('cadernos')" class="filter-btn px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-cat="cadernos">
-                    Cadernos
-                </button>
-                <button onclick="filterCategory('florais')" class="filter-btn px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-cat="florais">
-                    Florais
-                </button>
-                <button onclick="filterCategory('minimalista')" class="filter-btn px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-cat="minimalista">
-                    Minimalistas
-                </button>
-                <button onclick="filterCategory('infantil')" class="filter-btn px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-cat="infantil">
-                    Infantil & Teen
-                </button>
-            </nav>
+  <!-- Cabeçalho Principal -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-pink-500 text-white flex items-center justify-center font-bold text-xl shadow-md">
+          <i class="fa-solid me-0 fa-book-open"></i>
         </div>
-    </header>
-
-    <!-- ÁREA PRINCIPAL DA GALERIA -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
-        
-        <!-- Contador de capas encontradas -->
-        <div class="flex items-center justify-between mb-6">
-            <p id="itemCount" class="text-sm font-medium text-slate-500">Exibindo todas as capas</p>
+        <div>
+          <h1 class="text-xl font-bold text-slate-900 tracking-tight">Catálogo de Capas</h1>
+          <p class="text-xs text-slate-500">Agendas & Cadernos Personalizados</p>
         </div>
-
-        <!-- Grid Otimizada para Carga Ultra Rápida -->
-        <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-            <!-- Os cards serão inseridos aqui dinamicamente pelo JavaScript -->
-        </div>
-
-        <!-- Mensagem de NENHUM RESULTADO -->
-        <div id="noResults" class="hidden text-center py-16">
-            <div class="text-4xl mb-3">🔍</div>
-            <h3 class="text-lg font-semibold text-slate-700">Nenhuma capa encontrada</h3>
-            <p class="text-sm text-slate-500 mt-1">Tente buscar por outros termos ou mudar a categoria selecionada.</p>
-        </div>
-    </main>
-
-    <!-- MODAL LIGHTBOX / DETALHES DA CAPA -->
-    <div id="modal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-200 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-custom">
-        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl transform scale-95 transition-transform duration-200 relative flex flex-col md:flex-row max-h-[90vh]">
-            
-            <!-- Botão Fechar -->
-            <button onclick="closeModal()" class="absolute top-3 right-3 z-10 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-
-            <!-- Imagem Ampliada -->
-            <div class="w-full md:w-1/2 bg-slate-100 flex items-center justify-center p-4 max-h-[50vh] md:max-h-full">
-                <img id="modalImage" class="max-h-full max-w-full object-contain rounded-lg shadow-sm" src="" alt="Capa ampliada">
-            </div>
-
-            <!-- Informações e Ações da Capa -->
-            <div class="w-full md:w-1/2 p-6 flex flex-col justify-between overflow-y-auto">
-                <div>
-                    <span id="modalCategory" class="text-xs font-semibold uppercase tracking-wider text-brand-600 bg-brand-50 px-2.5 py-1 rounded-md">
-                        Categoria
-                    </span>
-                    <h2 id="modalTitle" class="text-xl font-bold text-slate-900 mt-3 mb-2">
-                        Nome da Capa
-                    </h2>
-                    <p id="modalDescription" class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Capa personalizada impressa em alta resolução com laminação fosca/brilho de alta resistência.
-                    </p>
-                </div>
-
-                <div class="space-y-3 pt-4 border-t border-slate-100">
-                    <!-- Botão de Solicitação via WhatsApp -->
-                    <a id="whatsappBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors text-sm">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12.031 0C5.392 0 0 5.39 0 12.029c0 2.12.553 4.187 1.606 6.01L0 24l6.126-1.606A11.96 11.96 0 0012.031 24c6.638 0 12.029-5.39 12.029-12.029C24.06 5.39 18.669 0 12.031 0zm0 22.038c-1.815 0-3.593-.487-5.155-1.412l-.369-.219-3.832 1.006 1.023-3.737-.242-.385a9.98 9.98 0 01-1.53-5.262c0-5.528 4.498-10.026 10.026-10.026 5.529 0 10.027 4.498 10.027 10.026 0 5.529-4.498 10.027-10.028 10.027z"/>
-                        </svg>
-                        Encomendar esta Capa
-                    </a>
-
-                    <!-- Botão para Copiar Link -->
-                    <button onclick="copyCurrentLink()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors text-sm">
-                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 012-2v-8a2 2 0 01-2-2h-8a2 2 0 01-2 2v8a2 2 0 012 2z"/>
-                        </svg>
-                        Copiar Link
-                    </button>
-                    
-                    <div id="toastMessage" class="hidden text-center text-xs text-emerald-600 font-medium">
-                        ✓ Link copiado para a área de transferência!
-                    </div>
-                </div>
-            </div>
-
-        </div>
+      </div>
+      
+      <!-- Busca rápida -->
+      <div class="relative w-full sm:w-72">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+        <input 
+          type="text" 
+          id="busca-input" 
+          placeholder="Buscar modelo ou frase..." 
+          class="w-full pl-9 pr-4 py-2 bg-slate-100 rounded-full text-sm border-none focus:ring-2 focus:ring-pink-500 outline-none transition-all"
+          oninput="filtrarProdutos()"
+        />
+      </div>
     </div>
 
-    <!-- RODAPÉ -->
-    <footer class="bg-white border-t border-slate-200 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-slate-500 text-sm">
-            <p class="font-medium text-slate-700">Ateliê Doce Papel © 2026</p>
-            <p class="mt-1 text-xs">Exibição rápida desenvolvida para otimização em redes móveis e computadores.</p>
+    <!-- Navegação por Categorias -->
+    <div class="border-t border-slate-100 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex space-x-2 py-3 overflow-x-auto hide-scrollbar text-sm" id="categorias-container">
+          <!-- Gerado via JavaScript -->
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Grade de Capas (Catálogo) -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <div id="produtos-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Cards renderizados dinamicamente -->
+    </div>
+    
+    <!-- Mensagem de busca sem resultado -->
+    <div id="sem-resultados" class="hidden text-center py-16">
+      <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
+      <p class="text-slate-500 text-base">Nenhum modelo encontrado para esta busca.</p>
+    </div>
+  </main>
+
+  <!-- Modal de Detalhes do Produto (com carrossel de fotos) -->
+  <div id="produto-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+      <button onclick="fecharModal()" class="absolute top-4 right-4 z-10 w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="p-6">
+        <!-- Visualizador Principal de Imagem -->
+        <div class="relative bg-slate-100 rounded-xl overflow-hidden mb-4 aspect-square max-h-96 flex items-center justify-center group">
+          <img id="modal-imagem-principal" src="" alt="" class="object-contain max-h-full max-w-full" />
+          
+          <!-- Botões de navegação no modal (visíveis se houver > 1 foto) -->
+          <button id="btn-foto-anterior" onclick="mudarFoto(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 w-8 h-8 rounded-full flex items-center justify-center shadow transition-all">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button id="btn-foto-proxima" onclick="mudarFoto(1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 w-8 h-8 rounded-full flex items-center justify-center shadow transition-all">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <!-- Botão de Zoom / Ampliar -->
+          <button onclick="abrirZoom()" class="absolute bottom-3 right-3 bg-slate-900/70 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 backdrop-blur-sm transition-all shadow">
+            <i class="fa-solid fa-magnifying-glass-plus"></i> Ampliar Foto
+          </button>
         </div>
-    </footer>
 
-    <!-- LÓGICA JAVASCRIPT EM VANILLA (SEM BIBLIOTECAS PESADAS) -->
-    <script>
-        // SEU NÚMERO DE WHATSAPP (Com DDD, sem traços ou espaços)
-        const SEU_WHATSAPP = "5598999999999"; 
+        <!-- Miniaturas clicáveis -->
+        <div id="modal-miniaturas" class="flex gap-2 overflow-x-auto pb-2 mb-4 hide-scrollbar">
+          <!-- Renderizado dinamicamente -->
+        </div>
 
-        // BANCO DE DADOS DE EXEMPLO (Substitua as imagens pelos caminhos/URLs das suas capas)
-        const coversData = [
-            {
-                id: 1,
-                title: "Jardim Botânico Gold",
-                category: "florais",
-                categoryLabel: "Florais",
-                image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
-                description: "Design floral delicado com detalhes em efeito dourado. Ideal para agendas e planners executivos."
-            },
-            {
-                id: 2,
-                title: "Mármore Rose Gold",
-                category: "minimalista",
-                categoryLabel: "Minimalista",
-                image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop&q=80",
-                description: "Textura suave estilo mármore rosé com detalhes geométricos modernos."
-            },
-            {
-                id: 3,
-                title: "Elegância Noturna 2026",
-                category: "agendas",
-                categoryLabel: "Agendas 2026",
-                image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=600&auto=format&fit=crop&q=80",
-                description: "Capa sóbria e elegante em tons azuis escuros com tipografia dourada premium."
-            },
-            {
-                id: 4,
-                title: "Planos & Sonhos",
-                category: "cadernos",
-                categoryLabel: "Cadernos",
-                image: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?w=600&auto=format&fit=crop&q=80",
-                description: "Ilustração artesanal aconchegante para anotações diárias e diários de bordo."
-            },
-            {
-                id: 5,
-                title: "Universo Mágico",
-                category: "infantil",
-                categoryLabel: "Infantil & Teen",
-                image: "https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=600&auto=format&fit=crop&q=80",
-                description: "Capa lúdica e divertida com ilustração de galáxias e tons pastel."
-            },
-            {
-                id: 6,
-                title: "Girassóis da Tarde",
-                category: "florais",
-                categoryLabel: "Florais",
-                image: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&auto=format&fit=crop&q=80",
-                description: "Capa vibrante inspirada em campos de girassol sob o sol da tarde."
-            },
-            {
-                id: 7,
-                title: "Planner Neutro Kraft",
-                category: "minimalista",
-                categoryLabel: "Minimalista",
-                image: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=600&auto=format&fit=crop&q=80",
-                description: "Design limpo e ecológico voltado para organização pessoal minimalista."
-            },
-            {
-                id: 8,
-                title: "Cores da Primavera",
-                category: "agendas",
-                categoryLabel: "Agendas 2026",
-                image: "https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?w=600&auto=format&fit=crop&q=80",
-                description: "Composição floral aquarelada colorida e cheia de vida."
-            }
-        ];
+        <h3 id="modal-titulo" class="text-xl font-bold text-slate-900 mb-2"></h3>
+        <p id="modal-descricao" class="text-slate-600 text-sm mb-6 leading-relaxed"></p>
 
-        let currentCategory = 'todos';
-        let currentModalItem = null;
+        <!-- Botão de Pedido via WhatsApp -->
+        <a id="modal-btn-whatsapp" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md">
+          <i class="fa-brands fa-whatsapp text-xl"></i>
+          Pedir este Modelo no WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
 
-        // Renderiza as capas na grid
-        function renderGallery(items) {
-            const grid = document.getElementById('galleryGrid');
-            const noResults = document.getElementById('noResults');
-            const itemCount = document.getElementById('itemCount');
+  <!-- Modal de Zoom em Tela Cheia -->
+  <div id="zoom-modal" class="fixed inset-0 bg-black/90 z-60 flex items-center justify-center p-2 hidden" onclick="fecharZoom()">
+    <button onclick="fecharZoom()" class="absolute top-4 right-4 text-white/80 hover:text-white text-2xl p-2 z-10">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <img id="zoom-imagem" src="" class="max-w-full max-h-full object-contain rounded-lg" alt="Imagem ampliada" />
+  </div>
 
-            grid.innerHTML = '';
+  <!-- Botão Flutuante do WhatsApp (Fixo no canto inferior direito) -->
+  <a 
+    href="https://wa.me/5598988000000?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20as%20capas%20do%20catálogo." 
+    target="_blank" 
+    id="btn-whatsapp-flutuante"
+    class="fixed bottom-6 right-6 z-40 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full p-4 shadow-xl flex items-center justify-center transition-all hover:scale-105 group"
+    title="Fale Conosco no WhatsApp"
+  >
+    <i class="fa-brands fa-whatsapp text-2xl"></i>
+    <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-sm font-medium pl-0 group-hover:pl-2">
+      Falar no WhatsApp
+    </span>
+  </a>
 
-            if (items.length === 0) {
-                noResults.classList.remove('hidden');
-                itemCount.textContent = 'Nenhuma capa encontrada';
-                return;
-            }
+  <!-- Rodapé -->
+  <footer class="bg-white border-t border-slate-200 mt-auto py-6 text-center text-xs text-slate-500">
+    <p>© Catálogo de Capas Personalizadas. Todos os direitos reservados.</p>
+  </footer>
 
-            noResults.classList.add('hidden');
-            itemCount.textContent = `Exibindo ${items.length} ${items.length === 1 ? 'capa' : 'capas'}`;
+  <!-- Lógica da Aplicação -->
+  <script>
+    // Configuração do seu número do WhatsApp (formato internacional: código país + DDD + número)
+    const NUMERO_WHATSAPP = "5598988000000"; // Substitua pelo seu WhatsApp real
 
-            items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'group bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between animate-fade-in cursor-pointer';
-                card.onclick = () => openModal(item);
+    // BASE DE DADOS DOS PRODUTOS
+    // Para ter mais de uma imagem em um único produto, basta adicionar os links na lista 'imagens'
+    const produtos = [
+      {
+        id: 1,
+        titulo: "Capa Corrida Transforma - Rosa",
+        categoria: "agendas",
+        // Lista com múltiplos caminhos de fotos para este mesmo produto:
+        imagens: [
+          "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&auto=format&fit=crop"
+        ],
+        descricao: "Design exclusivo em tons rosa e branco com laminação durável e acabamento impecável."
+      },
+      {
+        id: 2,
+        titulo: "Caderno Personalizado Floral",
+        categoria: "cadernos",
+        imagens: [
+          "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=800&auto=format&fit=crop"
+        ],
+        descricao: "Estampa floral elegante com acabamento fosco aveludado e espaço para detalhes."
+      },
+      {
+        id: 3,
+        titulo: "Capa Minimalista Executiva",
+        categoria: "agendas",
+        imagens: [
+          "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=800&auto=format&fit=crop"
+        ],
+        descricao: "Visual limpo e sofisticado para planejamento diário e rotina de trabalho."
+      }
+    ];
 
-                card.innerHTML = `
-                    <div class="relative aspect-[3/4] bg-slate-100 overflow-hidden">
-                        <img 
-                            src="${item.image}" 
-                            alt="${item.title}" 
-                            loading="lazy"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        >
-                        <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm">
-                            ${item.categoryLabel}
-                        </span>
-                    </div>
-                    <div class="p-3">
-                        <h3 class="font-medium text-slate-900 text-sm truncate group-hover:text-brand-600 transition-colors">
-                            ${item.title}
-                        </h3>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+    let categoriaAtual = 'todas';
+    let produtoAtivo = null;
+    let indiceFotoAtual = 0;
 
-        // Filtro de Categorias
-        function filterCategory(category) {
-            currentCategory = category;
+    // Inicialização da página
+    document.addEventListener('DOMContentLoaded', () => {
+      renderizarCategorias();
+      renderizarProdutos();
+      atualizarLinkWhatsappFlutuante();
+    });
+
+    function atualizarLinkWhatsappFlutuante() {
+      const btn = document.getElementById('btn-whatsapp-flutuante');
+      btn.href = `https://wa.me/${NUMERO_WHATSAPP}?text=Olá!%20Gostaria%20de%20tirar%20uma%20dúvida%20sobre%20as%20capas.`;
+    }
+
+    function renderizarCategorias() {
+      const container = document.getElementById('categorias-container');
+      const categorias = [
+        { id: 'todas', nome: 'Todas as Capas' },
+        { id: 'agendas', nome: 'Agendas' },
+        { id: 'cadernos', nome: 'Cadernos' }
+      ];
+
+      container.innerHTML = categorias.map(cat => `
+        <button 
+          onclick="filtrarPorCategoria('${cat.id}')"
+          class="px-4 py-1.5 rounded-full whitespace-nowrap transition-all text-xs font-medium ${
+            categoriaAtual === cat.id 
+              ? 'bg-pink-500 text-white shadow-sm' 
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }"
+        >
+          ${cat.nome}
+        </button>
+      `).join('');
+    }
+
+    function renderizarProdutos() {
+      const grid = document.getElementById('produtos-grid');
+      const semResultados = document.getElementById('sem-resultados');
+      const termoBusca = document.getElementById('busca-input').value.toLowerCase();
+
+      const filtrados = produtos.filter(p => {
+        const bateCategoria = categoriaAtual === 'todas' || p.categoria === categoriaAtual;
+        const bateBusca = p.titulo.toLowerCase().includes(termoBusca) || p.descricao.toLowerCase().includes(termoBusca);
+        return bateCategoria && bateBusca;
+      });
+
+      if (filtrados.length === 0) {
+        grid.innerHTML = '';
+        semResultados.classList.remove('hidden');
+        return;
+      }
+
+      semResultados.classList.add('hidden');
+      grid.innerHTML = filtrados.map(p => `
+        <div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group">
+          <div class="relative aspect-square bg-slate-100 overflow-hidden cursor-pointer" onclick="abrirModal(${p.id})">
+            <img src="${p.imagens[0]}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            ${p.imagens.length > 1 ? `
+              <span class="absolute top-3 right-3 bg-slate-900/70 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+                <i class="fa-solid fa-images"></i> ${p.imagens.length}
+              </span>
+            ` : ''}
+          </div>
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="font-semibold text-slate-900 text-sm mb-1 group-hover:text-pink-600 transition-colors">${p.titulo}</h3>
+            <p class="text-xs text-slate-500 line-clamp-2 mb-4 flex-grow">${p.descricao}</p>
             
-            // Atualiza botões
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.dataset.cat === category) {
-                    btn.className = 'filter-btn active px-4 py-1.5 rounded-full bg-brand-500 text-white shadow-sm transition-all whitespace-nowrap';
-                } else {
-                    btn.className = 'filter-btn px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap';
-                }
-            });
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+              <button onclick="abrirModal(${p.id})" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium py-2 rounded-xl transition-colors">
+                Ver Fotos
+              </button>
+              <a href="https://wa.me/${NUMERO_WHATSAPP}?text=Olá!%20Gostaria%20de%20encomendar%20a%20capa:%20${encodeURIComponent(p.titulo)}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium px-3 py-2 rounded-xl transition-colors flex items-center justify-center gap-1">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
 
-            applyFilters();
-        }
+    function filtrarPorCategoria(cat) {
+      categoriaAtual = cat;
+      renderizarCategorias();
+      renderizarProdutos();
+    }
 
-        // Busca em Tempo Real
-        document.getElementById('searchInput').addEventListener('input', applyFilters);
+    function filtrarProdutos() {
+      renderizarProdutos();
+    }
 
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    // LÓGICA DO MODAL DE DETALHES E CARROSSEL
+    function abrirModal(id) {
+      produtoAtivo = produtos.find(p => p.id === id);
+      if (!produtoAtivo) return;
 
-            const filtered = coversData.filter(item => {
-                const matchesCategory = currentCategory === 'todos' || item.category === currentCategory;
-                const matchesSearch = item.title.toLowerCase().includes(searchTerm) || 
-                                      item.description.toLowerCase().includes(searchTerm) ||
-                                      item.categoryLabel.toLowerCase().includes(searchTerm);
-                return matchesCategory && matchesSearch;
-            });
+      indiceFotoAtual = 0;
+      document.getElementById('modal-titulo').innerText = produtoAtivo.titulo;
+      document.getElementById('modal-descricao').innerText = produtoAtivo.descricao;
+      
+      const mensagemWa = encodeURIComponent(`Olá! Vi a capa "${produtoAtivo.titulo}" no catálogo e gostaria de encomendar.`);
+      document.getElementById('modal-btn-whatsapp').href = `https://wa.me/${NUMERO_WHATSAPP}?text=${mensagemWa}`;
 
-            renderGallery(filtered);
-        }
+      atualizarExibicaoFotoModal();
+      document.getElementById('produto-modal').classList.remove('hidden');
+    }
 
-        // Modal Lightbox
-        function openModal(item) {
-            currentModalItem = item;
-            document.getElementById('modalImage').src = item.image;
-            document.getElementById('modalTitle').textContent = item.title;
-            document.getElementById('modalCategory').textContent = item.categoryLabel;
-            document.getElementById('modalDescription').textContent = item.description;
+    function fecharModal() {
+      document.getElementById('produto-modal').classList.add('hidden');
+    }
 
-            // WhatsApp link personalizado
-            const msg = encodeURIComponent(`Olá! Vi a capa "${item.title}" no seu site e gostaria de saber mais informações sobre valores e prazos.`);
-            document.getElementById('whatsappBtn').href = `https://wa.me/${SEU_WHATSAPP}?text=${msg}`;
+    function mudarFoto(direcao) {
+      if (!produtoAtivo) return;
+      const total = produtoAtivo.imagens.length;
+      indiceFotoAtual = (indiceFotoAtual + direcao + total) % total;
+      atualizarExibicaoFotoModal();
+    }
 
-            const modal = document.getElementById('modal');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.children[0].classList.remove('scale-95');
-            }, 10);
-            
-            document.body.style.overflow = 'hidden';
-        }
+    function selecionarFotoIndex(index) {
+      indiceFotoAtual = index;
+      atualizarExibicaoFotoModal();
+    }
 
-        function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.add('opacity-0');
-            modal.children[0].classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }, 200);
-        }
+    function atualizarExibicaoFotoModal() {
+      if (!produtoAtivo) return;
 
-        // Copiar Link
-        function copyCurrentLink() {
-            if (!currentModalItem) return;
-            const textToCopy = window.location.href.split('#')[0] + `#capa-${currentModalItem.id}`;
-            
-            // Clipboard fallback para iframe
-            const tempInput = document.createElement("input");
-            tempInput.value = textToCopy;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
+      const imgPrincipal = document.getElementById('modal-imagem-principal');
+      imgPrincipal.src = produtoAtivo.imagens[indiceFotoAtual];
 
-            const toast = document.getElementById('toastMessage');
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-        }
+      const btnAnt = document.getElementById('btn-foto-anterior');
+      const btnProx = document.getElementById('btn-foto-proxima');
+      const miniaturasContainer = document.getElementById('modal-miniaturas');
 
-        // Fechar ao clicar fora do modal
-        document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('modal')) {
-                closeModal();
-            }
-        });
+      // Exibe ou oculta os botões de seta caso haja apenas 1 imagem
+      if (produtoAtivo.imagens.length > 1) {
+        btnAnt.classList.remove('hidden');
+        btnProx.classList.remove('hidden');
+        miniaturasContainer.classList.remove('hidden');
 
-        // Inicializar
-        window.onload = function() {
-            renderGallery(coversData);
-        };
-    </script>
+        // Renderiza miniaturas
+        miniaturasContainer.innerHTML = produtoAtivo.imagens.map((imgUrl, i) => `
+          <button onclick="selecionarFotoIndex(${i})" class="w-14 h-14 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${i === indiceFotoAtual ? 'border-pink-500 opacity-100 scale-95' : 'border-transparent opacity-60 hover:opacity-100'}">
+            <img src="${imgUrl}" class="w-full h-full object-cover" />
+          </button>
+        `).join('');
+      } else {
+        btnAnt.classList.add('hidden');
+        btnProx.classList.add('hidden');
+        miniaturasContainer.classList.add('hidden');
+      }
+    }
+
+    // ZOOM / TELA CHEIA
+    function abrirZoom() {
+      if (!produtoAtivo) return;
+      const zoomImg = document.getElementById('zoom-imagem');
+      zoomImg.src = produtoAtivo.imagens[indiceFotoAtual];
+      document.getElementById('zoom-modal').classList.remove('hidden');
+    }
+
+    function fecharZoom() {
+      document.getElementById('zoom-modal').classList.add('hidden');
+    }
+  </script>
 </body>
 </html>
