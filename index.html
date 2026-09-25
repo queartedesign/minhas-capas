@@ -24,7 +24,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-pink-500 text-white flex items-center justify-center font-bold text-xl shadow-md">
-          <i class="fa-solid me-0 fa-book-open"></i>
+          <i class="fa-solid fa-book-open"></i>
         </div>
         <div>
           <h1 class="text-xl font-bold text-slate-900 tracking-tight">Catálogo de Capas</h1>
@@ -69,7 +69,7 @@
   </main>
 
   <!-- Modal de Detalhes do Produto (com carrossel de fotos) -->
-  <div id="produto-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div id="produto-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
       <button onclick="fecharModal()" class="absolute top-4 right-4 z-10 w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center transition-colors">
         <i class="fa-solid fa-xmark"></i>
@@ -111,12 +111,15 @@
     </div>
   </div>
 
-  <!-- Modal de Zoom em Tela Cheia -->
-  <div id="zoom-modal" class="fixed inset-0 bg-black/90 z-60 flex items-center justify-center p-2 hidden" onclick="fecharZoom()">
-    <button onclick="fecharZoom()" class="absolute top-4 right-4 text-white/80 hover:text-white text-2xl p-2 z-10">
-      <i class="fa-solid fa-xmark"></i>
+  <!-- Modal de Zoom em Tela Cheia (Isolado e com z-index superior) -->
+  <div id="zoom-modal" class="fixed inset-0 bg-slate-950/95 z-50 flex flex-col items-center justify-center p-4 hidden" onclick="fecharZoom()">
+    <button onclick="fecharZoom()" class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all z-10">
+      <i class="fa-solid fa-xmark text-lg"></i>
     </button>
-    <img id="zoom-imagem" src="" class="max-w-full max-h-full object-contain rounded-lg" alt="Imagem ampliada" />
+    <div class="w-full h-full flex items-center justify-center p-2 sm:p-6" onclick="event.stopPropagation()">
+      <img id="zoom-imagem" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" alt="Imagem ampliada" />
+    </div>
+    <span class="text-white/60 text-xs mt-2">Clique em qualquer lugar fora para fechar</span>
   </div>
 
   <!-- Botão Flutuante do WhatsApp (Fixo no canto inferior direito) -->
@@ -124,7 +127,7 @@
     href="https://wa.me/5598988000000?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20as%20capas%20do%20catálogo." 
     target="_blank" 
     id="btn-whatsapp-flutuante"
-    class="fixed bottom-6 right-6 z-40 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full p-4 shadow-xl flex items-center justify-center transition-all hover:scale-105 group"
+    class="fixed bottom-6 right-6 z-30 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full p-4 shadow-xl flex items-center justify-center transition-all hover:scale-105 group"
     title="Fale Conosco no WhatsApp"
   >
     <i class="fa-brands fa-whatsapp text-2xl"></i>
@@ -144,13 +147,11 @@
     const NUMERO_WHATSAPP = "5598988000000"; // Substitua pelo seu WhatsApp real
 
     // BASE DE DADOS DOS PRODUTOS
-    // Para ter mais de uma imagem em um único produto, basta adicionar os links na lista 'imagens'
     const produtos = [
       {
         id: 1,
         titulo: "Capa Corrida Transforma - Rosa",
         categoria: "agendas",
-        // Lista com múltiplos caminhos de fotos para este mesmo produto:
         imagens: [
           "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop",
           "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&auto=format&fit=crop"
@@ -181,7 +182,6 @@
     let produtoAtivo = null;
     let indiceFotoAtual = 0;
 
-    // Inicialização da página
     document.addEventListener('DOMContentLoaded', () => {
       renderizarCategorias();
       renderizarProdutos();
@@ -270,7 +270,7 @@
       renderizarProdutos();
     }
 
-    // LÓGICA DO MODAL DE DETALHES E CARROSSEL
+    // MODAL DE DETALHES
     function abrirModal(id) {
       produtoAtivo = produtos.find(p => p.id === id);
       if (!produtoAtivo) return;
@@ -312,13 +312,11 @@
       const btnProx = document.getElementById('btn-foto-proxima');
       const miniaturasContainer = document.getElementById('modal-miniaturas');
 
-      // Exibe ou oculta os botões de seta caso haja apenas 1 imagem
       if (produtoAtivo.imagens.length > 1) {
         btnAnt.classList.remove('hidden');
         btnProx.classList.remove('hidden');
         miniaturasContainer.classList.remove('hidden');
 
-        // Renderiza miniaturas
         miniaturasContainer.innerHTML = produtoAtivo.imagens.map((imgUrl, i) => `
           <button onclick="selecionarFotoIndex(${i})" class="w-14 h-14 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${i === indiceFotoAtual ? 'border-pink-500 opacity-100 scale-95' : 'border-transparent opacity-60 hover:opacity-100'}">
             <img src="${imgUrl}" class="w-full h-full object-cover" />
@@ -331,9 +329,14 @@
       }
     }
 
-    // ZOOM / TELA CHEIA
+    // CONTROLE DE ZOOM LÍMPIDO (Oculta o modal de fundo)
     function abrirZoom() {
       if (!produtoAtivo) return;
+      
+      // Oculta temporariamente o modal de detalhes
+      document.getElementById('produto-modal').classList.add('hidden');
+      
+      // Exibe o zoom
       const zoomImg = document.getElementById('zoom-imagem');
       zoomImg.src = produtoAtivo.imagens[indiceFotoAtual];
       document.getElementById('zoom-modal').classList.remove('hidden');
@@ -341,6 +344,11 @@
 
     function fecharZoom() {
       document.getElementById('zoom-modal').classList.add('hidden');
+      
+      // Reabre o modal de detalhes caso estivesse aberto
+      if (produtoAtivo) {
+        document.getElementById('produto-modal').classList.remove('hidden');
+      }
     }
   </script>
 </body>
