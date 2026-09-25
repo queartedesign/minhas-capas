@@ -17,7 +17,7 @@
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col relative pb-20">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col relative pb-20 select-none">
 
   <!-- Cabeçalho Principal -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
@@ -38,7 +38,7 @@
         <input 
           type="text" 
           id="busca-input" 
-          placeholder="Buscar modelo ou frase..." 
+          placeholder="Buscar modelo..." 
           class="w-full pl-9 pr-4 py-2 bg-slate-100 rounded-full text-sm border-none focus:ring-2 focus:ring-pink-500 outline-none transition-all"
           oninput="filtrarProdutos()"
         />
@@ -64,90 +64,81 @@
     <!-- Mensagem de busca sem resultado -->
     <div id="sem-resultados" class="hidden text-center py-16">
       <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
-      <p class="text-slate-500 text-base">Nenhum modelo encontrado para esta busca.</p>
+      <p class="text-slate-500 text-base">Nenhum modelo encontrado.</p>
     </div>
   </main>
 
-  <!-- Modal de Detalhes do Produto -->
-  <div id="produto-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
-      <button onclick="fecharModal()" class="absolute top-4 right-4 z-10 w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center transition-colors">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <div class="p-6">
-        <!-- Visualizador Principal de Imagem (Clicável para abrir Tela Cheia) -->
-        <div class="relative bg-slate-100 rounded-xl overflow-hidden mb-4 aspect-square max-h-96 flex items-center justify-center cursor-pointer group" onclick="abrirZoom(indiceFotoAtual)">
-          <img id="modal-imagem-principal" src="" alt="" class="object-contain max-h-full max-w-full group-hover:scale-105 transition-transform duration-300" />
-          
-          <!-- Botões de navegação no modal de detalhes -->
-          <button id="btn-foto-anterior" onclick="event.stopPropagation(); mudarFoto(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 w-8 h-8 rounded-full flex items-center justify-center shadow transition-all">
-            <i class="fa-solid fa-chevron-left"></i>
-          </button>
-          <button id="btn-foto-proxima" onclick="event.stopPropagation(); mudarFoto(1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 w-8 h-8 rounded-full flex items-center justify-center shadow transition-all">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-
-          <!-- Dica visual ao passar o mouse ou tocar -->
-          <span class="absolute bottom-3 right-3 bg-slate-900/70 text-white text-[11px] px-3 py-1 rounded-lg flex items-center gap-1.5 backdrop-blur-sm shadow pointer-events-none">
-            <i class="fa-solid fa-expand"></i> Toque para ampliar
-          </span>
-        </div>
-
-        <!-- Miniaturas clicáveis -->
-        <div id="modal-miniaturas" class="flex gap-2 overflow-x-auto pb-2 mb-4 hide-scrollbar">
-          <!-- Renderizado dinamicamente -->
-        </div>
-
-        <h3 id="modal-titulo" class="text-xl font-bold text-slate-900 mb-2"></h3>
-        <p id="modal-descricao" class="text-slate-600 text-sm mb-6 leading-relaxed"></p>
-
-        <!-- Botão de Pedido via WhatsApp -->
-        <a id="modal-btn-whatsapp" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md">
-          <i class="fa-brands fa-whatsapp text-xl"></i>
-          Pedir este Modelo no WhatsApp
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de Zoom em Tela Cheia com Navegação Fluida entre Fotos -->
-  <div id="zoom-modal" class="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center hidden select-none" onclick="fecharZoom()">
+  <!-- VISUALIZADOR TELA CHEIA FLUIDO (GALERIA/STORIES) -->
+  <div id="galeria-modal" class="fixed inset-0 bg-slate-950/95 z-50 flex flex-col justify-between hidden transition-opacity duration-200">
     
-    <!-- Botão Fechar -->
-    <button onclick="fecharZoom()" class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all z-20">
-      <i class="fa-solid fa-xmark text-lg"></i>
-    </button>
-
-    <!-- Indicador de Contador (Ex: 1 / 3) -->
-    <div id="zoom-contador" class="absolute top-5 left-6 text-white/80 text-sm font-medium bg-white/10 px-3 py-1 rounded-full backdrop-blur-md z-20">
-      1 / 1
+    <!-- Topo da Galeria: Título e Botão Fechar -->
+    <div class="w-full p-4 flex justify-between items-center text-white z-20 bg-gradient-to-b from-black/80 to-transparent">
+      <div>
+        <h3 id="galeria-titulo" class="font-semibold text-base sm:text-lg"></h3>
+        <p id="galeria-contador" class="text-xs text-white/70"></p>
+      </div>
+      <button onclick="fecharGaleria()" class="bg-white/10 hover:bg-white/20 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
     </div>
 
-    <!-- Área da Imagem Ampliada com Controle de Gestos -->
-    <div class="relative w-full h-full flex items-center justify-center p-2 sm:p-8" onclick="event.stopPropagation()">
-      <img id="zoom-imagem" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl transition-all duration-200" alt="Imagem ampliada" />
+    <!-- Centro da Galeria: Imagem + Botões Laterais Grandes -->
+    <div class="relative flex-grow flex items-center justify-center p-2 sm:p-6 overflow-hidden" onclick="fecharGaleria()">
+      
+      <!-- Imagem Ampliada -->
+      <img 
+        id="galeria-imagem" 
+        src="" 
+        class="max-w-full max-h-[70vh] sm:max-h-[75vh] object-contain rounded-lg shadow-2xl transition-all duration-300 cursor-pointer" 
+        alt="Foto da capa"
+        onclick="event.stopPropagation()"
+      />
 
       <!-- Seta Esquerda (Anterior) -->
-      <button id="zoom-btn-ant" onclick="mudarFotoZoom(-1)" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 bg-white/15 hover:bg-white/30 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all backdrop-blur-md z-20">
+      <button 
+        id="btn-galeria-ant" 
+        onclick="event.stopPropagation(); mudarFotoGaleria(-1)" 
+        class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all border border-white/20 z-30"
+      >
         <i class="fa-solid fa-chevron-left text-xl"></i>
       </button>
 
       <!-- Seta Direita (Próxima) -->
-      <button id="zoom-btn-prox" onclick="mudarFotoZoom(1)" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 bg-white/15 hover:bg-white/30 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all backdrop-blur-md z-20">
+      <button 
+        id="btn-galeria-prox" 
+        onclick="event.stopPropagation(); mudarFotoGaleria(1)" 
+        class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all border border-white/20 z-30"
+      >
         <i class="fa-solid fa-chevron-right text-xl"></i>
       </button>
     </div>
 
-    <!-- Legenda/Instrução no Rodapé -->
-    <div class="absolute bottom-4 text-white/50 text-xs text-center px-4 z-20">
-      Deslize para os lados ou use as setas para ver mais fotos
+    <!-- Rodapé da Galeria: Miniaturas + Descrição + Botão do WhatsApp -->
+    <div class="w-full p-4 bg-gradient-to-t from-black/90 via-black/80 to-transparent flex flex-col items-center gap-3 z-20">
+      
+      <!-- Miniaturas clicáveis no rodapé -->
+      <div id="galeria-miniaturas" class="flex gap-2 overflow-x-auto max-w-full hide-scrollbar py-1">
+        <!-- Gerado via JS -->
+      </div>
+
+      <p id="galeria-descricao" class="text-xs text-slate-300 text-center max-w-lg line-clamp-2 px-2"></p>
+
+      <!-- Botão de Ação Direta para o WhatsApp -->
+      <a 
+        id="galeria-btn-whatsapp" 
+        href="#" 
+        target="_blank" 
+        class="bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm py-2.5 px-6 rounded-xl flex items-center gap-2 shadow-lg transition-all"
+      >
+        <i class="fa-brands fa-whatsapp text-lg"></i>
+        Quero este modelo
+      </a>
     </div>
   </div>
 
-  <!-- Botão Flutuante do WhatsApp -->
+  <!-- Botão Flutuante do WhatsApp na Tela Inicial -->
   <a 
-    href="https://wa.me/5598988000000?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20as%20capas%20do%20catálogo." 
+    href="#" 
     target="_blank" 
     id="btn-whatsapp-flutuante"
     class="fixed bottom-6 right-6 z-30 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full p-4 shadow-xl flex items-center justify-center transition-all hover:scale-105 group"
@@ -159,23 +150,25 @@
     </span>
   </a>
 
-  <!-- Rodapé -->
+  <!-- Rodapé do Site -->
   <footer class="bg-white border-t border-slate-200 mt-auto py-6 text-center text-xs text-slate-500">
     <p>© Catálogo de Capas Personalizadas. Todos os direitos reservados.</p>
   </footer>
 
   <!-- Lógica da Aplicação -->
   <script>
-    const NUMERO_WHATSAPP = "5598988000000"; // Substitua pelo seu WhatsApp real
+    const NUMERO_WHATSAPP = "5598988000000"; // Informe seu número real com DDD
 
+    // BASE DE DADOS DOS PRODUTOS
     const produtos = [
       {
         id: 1,
         titulo: "Capa Corrida Transforma - Rosa",
         categoria: "agendas",
         imagens: [
-          "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&auto=format&fit=crop"
+          "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1000&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1000&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=1000&auto=format&fit=crop"
         ],
         descricao: "Design exclusivo em tons rosa e branco com laminação durável e acabamento impecável."
       },
@@ -184,7 +177,8 @@
         titulo: "Caderno Personalizado Floral",
         categoria: "cadernos",
         imagens: [
-          "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=800&auto=format&fit=crop"
+          "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=1000&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1000&auto=format&fit=crop"
         ],
         descricao: "Estampa floral elegante com acabamento fosco aveludado e espaço para detalhes."
       },
@@ -193,7 +187,7 @@
         titulo: "Capa Minimalista Executiva",
         categoria: "agendas",
         imagens: [
-          "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=800&auto=format&fit=crop"
+          "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=1000&auto=format&fit=crop"
         ],
         descricao: "Visual limpo e sofisticado para planejamento diário e rotina de trabalho."
       }
@@ -203,7 +197,7 @@
     let produtoAtivo = null;
     let indiceFotoAtual = 0;
 
-    // Suporte para swipe no celular
+    // Suporte para deslizar o dedo (Swipe) no celular
     let touchStartX = 0;
     let touchEndX = 0;
 
@@ -211,12 +205,12 @@
       renderizarCategorias();
       renderizarProdutos();
       atualizarLinkWhatsappFlutuante();
-      configurarTeclasEToques();
+      configurarTeclasETouch();
     });
 
     function atualizarLinkWhatsappFlutuante() {
       const btn = document.getElementById('btn-whatsapp-flutuante');
-      btn.href = `https://wa.me/${NUMERO_WHATSAPP}?text=Olá!%20Gostaria%20de%20tirar%20uma%20dúvida%20sobre%20as%20capas.`;
+      btn.href = `https://wa.me/${NUMERO_WHATSAPP}?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20as%20capas.`;
     }
 
     function renderizarCategorias() {
@@ -260,8 +254,8 @@
 
       semResultados.classList.add('hidden');
       grid.innerHTML = filtrados.map(p => `
-        <div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group">
-          <div class="relative aspect-square bg-slate-100 overflow-hidden cursor-pointer" onclick="abrirModal(${p.id})">
+        <div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group cursor-pointer" onclick="abrirGaleria(${p.id})">
+          <div class="relative aspect-square bg-slate-100 overflow-hidden">
             <img src="${p.imagens[0]}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
             ${p.imagens.length > 1 ? `
               <span class="absolute top-3 right-3 bg-slate-900/70 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -273,14 +267,9 @@
             <h3 class="font-semibold text-slate-900 text-sm mb-1 group-hover:text-pink-600 transition-colors">${p.titulo}</h3>
             <p class="text-xs text-slate-500 line-clamp-2 mb-4 flex-grow">${p.descricao}</p>
             
-            <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
-              <button onclick="abrirModal(${p.id})" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium py-2 rounded-xl transition-colors">
-                Ver Fotos
-              </button>
-              <a href="https://wa.me/${NUMERO_WHATSAPP}?text=Olá!%20Gostaria%20de%20encomendar%20a%20capa:%20${encodeURIComponent(p.titulo)}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium px-3 py-2 rounded-xl transition-colors flex items-center justify-center gap-1">
-                <i class="fa-brands fa-whatsapp text-sm"></i>
-              </a>
-            </div>
+            <button class="w-full bg-slate-100 hover:bg-pink-500 hover:text-white text-slate-700 text-xs font-medium py-2 rounded-xl transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-expand"></i> Ver Fotos Grandes
+            </button>
           </div>
         </div>
       `).join('');
@@ -296,55 +285,61 @@
       renderizarProdutos();
     }
 
-    // MODAL DE DETALHES
-    function abrirModal(id) {
+    // LÓGICA DA GALERIA EM TELA CHEIA (FLUIDA)
+    function abrirGaleria(id, fotoIndex = 0) {
       produtoAtivo = produtos.find(p => p.id === id);
       if (!produtoAtivo) return;
 
-      indiceFotoAtual = 0;
-      document.getElementById('modal-titulo').innerText = produtoAtivo.titulo;
-      document.getElementById('modal-descricao').innerText = produtoAtivo.descricao;
-      
-      const mensagemWa = encodeURIComponent(`Olá! Vi a capa "${produtoAtivo.titulo}" no catálogo e gostaria de encomendar.`);
-      document.getElementById('modal-btn-whatsapp').href = `https://wa.me/${NUMERO_WHATSAPP}?text=${mensagemWa}`;
-
-      atualizarExibicaoFotoModal();
-      document.getElementById('produto-modal').classList.remove('hidden');
+      indiceFotoAtual = fotoIndex;
+      atualizarExibicaoGaleria();
+      document.getElementById('galeria-modal').classList.remove('hidden');
     }
 
-    function fecharModal() {
-      document.getElementById('produto-modal').classList.add('hidden');
+    function fecharGaleria() {
+      document.getElementById('galeria-modal').classList.add('hidden');
     }
 
-    function mudarFoto(direcao) {
+    function mudarFotoGaleria(direcao) {
       if (!produtoAtivo) return;
       const total = produtoAtivo.imagens.length;
       indiceFotoAtual = (indiceFotoAtual + direcao + total) % total;
-      atualizarExibicaoFotoModal();
+      atualizarExibicaoGaleria();
     }
 
-    function selecionarFotoIndex(index) {
+    function selecionarFotoDireta(index) {
       indiceFotoAtual = index;
-      atualizarExibicaoFotoModal();
+      atualizarExibicaoGaleria();
     }
 
-    function atualizarExibicaoFotoModal() {
+    function atualizarExibicaoGaleria() {
       if (!produtoAtivo) return;
 
-      const imgPrincipal = document.getElementById('modal-imagem-principal');
-      imgPrincipal.src = produtoAtivo.imagens[indiceFotoAtual];
+      const total = produtoAtivo.imagens.length;
+      document.getElementById('galeria-titulo').innerText = produtoAtivo.titulo;
+      document.getElementById('galeria-contador').innerText = `Foto ${indiceFotoAtual + 1} de ${total}`;
+      document.getElementById('galeria-descricao').innerText = produtoAtivo.descricao;
+      document.getElementById('galeria-imagem').src = produtoAtivo.imagens[indiceFotoAtual];
 
-      const btnAnt = document.getElementById('btn-foto-anterior');
-      const btnProx = document.getElementById('btn-foto-proxima');
-      const miniaturasContainer = document.getElementById('modal-miniaturas');
+      // Atualizar link do WhatsApp da galeria
+      const msgWa = encodeURIComponent(`Olá! Vi a foto ${indiceFotoAtual + 1} do modelo "${produtoAtivo.titulo}" no catálogo e gostaria de encomendar.`);
+      document.getElementById('galeria-btn-whatsapp').href = `https://wa.me/${NUMERO_WHATSAPP}?text=${msgWa}`;
 
-      if (produtoAtivo.imagens.length > 1) {
+      // Exibir ou ocultar setas laterais
+      const btnAnt = document.getElementById('btn-galeria-ant');
+      const btnProx = document.getElementById('btn-galeria-prox');
+      const miniaturasContainer = document.getElementById('galeria-miniaturas');
+
+      if (total > 1) {
         btnAnt.classList.remove('hidden');
         btnProx.classList.remove('hidden');
         miniaturasContainer.classList.remove('hidden');
 
+        // Renderizar miniaturas no rodapé do zoom
         miniaturasContainer.innerHTML = produtoAtivo.imagens.map((imgUrl, i) => `
-          <button onclick="selecionarFotoIndex(${i})" class="w-14 h-14 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${i === indiceFotoAtual ? 'border-pink-500 opacity-100 scale-95' : 'border-transparent opacity-60 hover:opacity-100'}">
+          <button 
+            onclick="event.stopPropagation(); selecionarFotoDireta(${i})" 
+            class="w-12 h-12 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${i === indiceFotoAtual ? 'border-pink-500 scale-105 opacity-100' : 'border-transparent opacity-50 hover:opacity-100'}"
+          >
             <img src="${imgUrl}" class="w-full h-full object-cover" />
           </button>
         `).join('');
@@ -355,73 +350,23 @@
       }
     }
 
-    // MODO TELA CHEIA (ZOOM FLUIDO COM NAVEGAÇÃO COMPLETA)
-    function abrirZoom(index = 0) {
-      if (!produtoAtivo) return;
-      
-      indiceFotoAtual = index;
-      document.getElementById('produto-modal').classList.add('hidden');
-      
-      atualizarExibicaoZoom();
-      document.getElementById('zoom-modal').classList.remove('hidden');
-    }
-
-    function fecharZoom() {
-      document.getElementById('zoom-modal').classList.add('hidden');
-      if (produtoAtivo) {
-        document.getElementById('produto-modal').classList.remove('hidden');
-      }
-    }
-
-    function mudarFotoZoom(direcao) {
-      if (!produtoAtivo) return;
-      const total = produtoAtivo.imagens.length;
-      indiceFotoAtual = (indiceFotoAtual + direcao + total) % total;
-      atualizarExibicaoZoom();
-      atualizarExibicaoFotoModal();
-    }
-
-    function atualizarExibicaoZoom() {
-      if (!produtoAtivo) return;
-
-      const total = produtoAtivo.imagens.length;
-      const zoomImg = document.getElementById('zoom-imagem');
-      const contador = document.getElementById('zoom-contador');
-      const btnAnt = document.getElementById('zoom-btn-ant');
-      const btnProx = document.getElementById('zoom-btn-prox');
-
-      zoomImg.src = produtoAtivo.imagens[indiceFotoAtual];
-      contador.innerText = `${indiceFotoAtual + 1} / ${total}`;
-
-      if (total > 1) {
-        btnAnt.classList.remove('hidden');
-        btnProx.classList.remove('hidden');
-      } else {
-        btnAnt.classList.add('hidden');
-        btnProx.classList.add('hidden');
-      }
-    }
-
-    // TECLAS E GESTOS TOUCH (SWIPE)
-    function configurarTeclasEToques() {
-      // Teclas ← e → do teclado
+    // ATALHOS DE TECLADO E GESTOS NO CELULAR (SWIPE)
+    function configurarTeclasETouch() {
       document.addEventListener('keydown', (e) => {
-        const zoomAberto = !document.getElementById('zoom-modal').classList.contains('hidden');
-        if (!zoomAberto) return;
+        const galeriaAberta = !document.getElementById('galeria-modal').classList.contains('hidden');
+        if (!galeriaAberta) return;
 
-        if (e.key === 'ArrowLeft') mudarFotoZoom(-1);
-        if (e.key === 'ArrowRight') mudarFotoZoom(1);
-        if (e.key === 'Escape') fecharZoom();
+        if (e.key === 'ArrowLeft') mudarFotoGaleria(-1);
+        if (e.key === 'ArrowRight') mudarFotoGaleria(1);
+        if (e.key === 'Escape') fecharGaleria();
       });
 
-      // Gestos de deslizar o dedo (Swipe) no celular no modo zoom
-      const zoomModal = document.getElementById('zoom-modal');
-      
-      zoomModal.addEventListener('touchstart', (e) => {
+      const modal = document.getElementById('galeria-modal');
+      modal.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
       }, { passive: true });
 
-      zoomModal.addEventListener('touchend', (e) => {
+      modal.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         tratarSwipe();
       }, { passive: true });
@@ -429,12 +374,11 @@
 
     function tratarSwipe() {
       const diferenca = touchEndX - touchStartX;
-      // Sensibilidade do deslize (mínimo de 40px)
       if (Math.abs(diferenca) > 40) {
         if (diferenca < 0) {
-          mudarFotoZoom(1); // Deslizou para esquerda = Próxima foto
+          mudarFotoGaleria(1); // Deslizou para a esquerda -> próxima foto
         } else {
-          mudarFotoZoom(-1); // Deslizou para direita = Foto anterior
+          mudarFotoGaleria(-1); // Deslizou para a direita -> foto anterior
         }
       }
     }
